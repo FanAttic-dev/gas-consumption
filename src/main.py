@@ -12,7 +12,7 @@ import re
 
 
 class DigitExtractor:
-    DATASET_PATH = Path("../dataset/gasmeter")
+    DATASET_PATH = Path("dataset/gasmeter")
     IM_WIDTH = 1000
 
     def __init__(self):
