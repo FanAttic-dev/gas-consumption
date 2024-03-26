@@ -4,6 +4,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from sklearn.neighbors import LocalOutlierFactor
 from datetime import datetime
+import matplotlib.dates as mdates
 
 
 class DataAnalyzer:
@@ -19,7 +20,7 @@ class DataAnalyzer:
     @staticmethod
     def img_name_to_date(img_name: str) -> str:
         dt = datetime.strptime(Path(img_name).stem, '%Y%m%d_%H%M%S')
-        return f"{dt.day}.{dt.month}.{dt.year}"
+        return dt  # f"{dt.day}.{dt.month}.{dt.year}"
 
     def discard_outliers_LOF(self, df: pd.DataFrame):
         df = df.dropna()
@@ -29,9 +30,9 @@ class DataAnalyzer:
         y_pred = clf.fit_predict(X)
         n_outliers = sum(y_pred == -1)
 
-        df.loc[y_pred == -1, "digits"] = 0
+        # df.loc[y_pred == -1, "digits"] = 0
 
-        return df, n_outliers
+        return df[y_pred == 1], n_outliers
 
     def discard_outliers_quantile(self, q=0.8):
         n_orig = len(self.df)
@@ -45,15 +46,16 @@ class DataAnalyzer:
         n_na = self.df.isna().sum()
 
         # self.df, n_outliers = self.discard_outliers_quantile(self.df)
-        df_filtered, n_outliers = self.discard_outliers_LOF(self.df)
+        self.df, n_outliers = self.discard_outliers_LOF(self.df)
 
-        self.df.update(df_filtered, overwrite=True)
+        # self.df.update(df_filtered, overwrite=True)
 
         print(
             f"Original size: {n_orig}, NaN count: {n_na}, outlier count: {n_outliers}"
         )
 
         plt.plot(self.df["date"], self.df["digits"], marker='o')
-        plt.grid(axis='y')
         plt.gcf().autofmt_xdate()
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y'))
+        plt.grid()
         plt.show()
