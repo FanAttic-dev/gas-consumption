@@ -1,19 +1,12 @@
 
 from digit_extractor import DigitExtractor
-from pathlib import Path
-from typing import Optional
-import skimage as ski
 from skimage.morphology import *
-from skimage.transform import resize
 from skimage.filters import threshold_otsu
 from skimage.util import compare_images
-from skimage.exposure import equalize_hist, equalize_adapthist
+from skimage.exposure import equalize_adapthist
 import numpy as np
 from matplotlib import pyplot as plt
-import pytesseract
 from PIL import Image
-import re
-import pandas as pd
 
 class DigitExtractorMorphology(DigitExtractor):
     def __init__(self, csv_name: str):

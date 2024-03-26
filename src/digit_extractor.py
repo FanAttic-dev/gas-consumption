@@ -1,16 +1,10 @@
 from abc import abstractmethod
 from pathlib import Path
-from typing import Optional
 import skimage as ski
 from skimage.morphology import *
 from skimage.transform import resize
-from skimage.filters import threshold_otsu
-from skimage.util import compare_images
-from skimage.exposure import equalize_hist, equalize_adapthist
-import numpy as np
 from matplotlib import pyplot as plt
 import pytesseract
-from PIL import Image
 import re
 import pandas as pd
 
@@ -26,7 +20,8 @@ class DigitExtractor:
         self.csv_name = csv_name
         self.img_paths = list(DigitExtractor.DATASET_PATH.iterdir())
 
-    def img_read(self, img_path: Path):
+    @staticmethod
+    def img_read(img_path: Path):
         img = ski.io.imread(img_path, as_gray=True)
 
         h, w = img.shape
@@ -74,8 +69,9 @@ class DigitExtractor:
     def process_dataset(self, img_idx=-1):
         if img_idx > -1:
             print(img_idx)
-            img = self.img_read(self.img_paths[img_idx])
-            self.extract_digits(img, show=True)
+            img = DigitExtractor.img_read(self.img_paths[img_idx])
+            digits = self.extract_digits(img, show=False)
+            print(digits)
             return
         
         d = {
@@ -85,7 +81,7 @@ class DigitExtractor:
         }
         for i, img_path in enumerate(self.img_paths):
             print(i)
-            img = self.img_read(img_path)
+            img = DigitExtractor.img_read(img_path)
             digits = self.extract_digits(img, show=False)
             print(digits)
             
