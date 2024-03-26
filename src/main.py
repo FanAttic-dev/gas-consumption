@@ -1,10 +1,11 @@
 from data_analyzer import DataAnalyzer
 from digit_extractor import DigitExtractor
+from digit_extractor_morphology import DigitExtractorMorphology
 
 CSV_NAME = "digits.csv"
 
 def extract_digits():
-    de = DigitExtractor(CSV_NAME)
+    de = DigitExtractorMorphology(CSV_NAME)
     de.process_dataset()
  
 def analyze():
@@ -12,4 +13,5 @@ def analyze():
     da.analyze()
 
 if __name__ == "__main__":    
-    analyze()
+    # analyze()
+    extract_digits()
