@@ -10,12 +10,13 @@ import matplotlib.dates as mdates
 class DataAnalyzer:
     def __init__(self, csv_name: str):
         self.csv_name = csv_name
-        self.df = pd.read_csv(csv_name, decimal=',', index_col="idx")
-        self.df = self.df.sort_values("img_name")
+        self.df = pd.read_csv(csv_name, decimal=',')
         self.df["digits"] = self.df["digits"].astype(float)
         self.df["date"] = self.df["img_name"].apply(
             DataAnalyzer.img_name_to_date
         )
+        self.df.set_index('date', inplace=True)
+        self.df.sort_index(inplace=True)
 
     @staticmethod
     def img_name_to_date(img_name: str) -> str:
@@ -41,7 +42,7 @@ class DataAnalyzer:
             f"Original size: {n_orig}, NaN count: {n_na}, Outlier count: {n_outliers}"
         )
 
-        plt.plot(self.df["date"], self.df["digits"], marker='o')
+        plt.plot(self.df.index, self.df["digits"], marker='o')
         plt.title("Gas consumption [m3]")
         plt.gcf().autofmt_xdate()
         plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d.%m.%Y'))
