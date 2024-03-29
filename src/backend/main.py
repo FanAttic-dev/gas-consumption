@@ -1,6 +1,6 @@
-from data_analyzer import DataAnalyzer
-from digit_extractor_morphology import DigitExtractorMorphology
-from digit_extractor_registration import DigitExtractorRegistration
+from services.data_analyzer import DataAnalyzer
+from services.digit_extractor_morphology import DigitExtractorMorphology
+from services.digit_extractor_registration import DigitExtractorRegistration
 
 CSV_NAME = "digits.csv"
 

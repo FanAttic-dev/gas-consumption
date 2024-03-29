@@ -1,11 +1,11 @@
 from pathlib import Path
-
 import numpy as np
-from digit_extractor import DigitExtractor
 from skimage.morphology import *
 import cv2
 from matplotlib import pyplot as plt
 from PIL import Image
+
+from services.digit_extractor import DigitExtractor
 
 
 class DigitExtractorRegistration(DigitExtractor):
