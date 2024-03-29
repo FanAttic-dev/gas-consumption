@@ -15,6 +15,8 @@ import {
   type UploadFileInfo
 } from 'naive-ui'
 
+import { ArchiveOutline as ArchiveIcon } from '@vicons/ionicons5'
+
 import { ref } from 'vue'
 
 const showModalRef = ref(false)
@@ -26,73 +28,39 @@ function handlePreview(file: UploadFileInfo) {
   showModalRef.value = true
 }
 
-const fileList = ref<UploadFileInfo[]>([
-  {
-    id: 'a',
-    name: '我是上传出错的普通文件.png',
-    status: 'error'
-  },
-  {
-    id: 'b',
-    name: '我是普通文本.doc',
-    status: 'finished',
-    type: 'text/plain'
-  },
-  {
-    id: 'c',
-    name: '我是自带url的图片.png',
-    status: 'finished',
-    url: 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg'
-  },
-  {
-    id: 'd',
-    name: '我是上传进度99%的文本.doc',
-    status: 'uploading',
-    percentage: 99
-  }
-])
+function beforeUpload(options: { file: UploadFileInfo; fileList: Array<UploadFileInfo> }) {
+  console.log(`Before Upload`)
+  console.log(options.file)
+  return true
+}
 
-const previewFileList = ref<UploadFileInfo[]>([
-  {
-    id: 'react',
-    name: '我是react.png',
-    status: 'finished',
-    url: 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg'
-  },
-  {
-    id: 'vue',
-    name: '我是vue.png',
-    status: 'finished',
-    url: 'https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg'
-  }
-])
+function fileListUpdate(fileList: UploadFileInfo[]) {
+  console.log(`FileListUpdate ${fileList.length}`)
+}
 </script>
 
 <template>
   <main>
     <n-card title="Upload your photos">
       <n-upload
-        action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-        :default-file-list="fileList"
-        list-type="image-card"
-      >
-        Click to Upload
-      </n-upload>
-      <n-divider />
-      <n-upload
-        action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f"
-        :default-file-list="previewFileList"
+        accept="image/*"
+        :multiple="true"
+        :max="50"
+        action=""
         list-type="image-card"
         @preview="handlePreview"
+        @before-upload="beforeUpload"
+        @update-file-list="fileListUpdate"
       />
-      <n-modal
-        v-model:show="showModalRef"
-        preset="card"
-        style="width: 600px"
-        title="A Cool Picture"
-      >
+      <n-modal v-model:show="showModalRef" preset="card" style="width: 600px" title="">
         <img :src="previewImageUrlRef" style="width: 100%" />
       </n-modal>
     </n-card>
   </main>
 </template>
+
+<style>
+.n-upload-trigger.n-upload-trigger--image-card .n-upload-dragger {
+  padding: 24px;
+}
+</style>
