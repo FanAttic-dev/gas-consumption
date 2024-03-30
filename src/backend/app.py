@@ -13,7 +13,7 @@ cors = CORS(app)
 
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5 # MAX 5MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg']
-app.config['UPLOAD_PATH'] = Path('uploads')
+app.config['UPLOAD_PATH'] = Path('static/uploads')
 app.config['UPLOAD_PATH'].mkdir(exist_ok=True)
 
 
@@ -43,11 +43,6 @@ def upload_images():
             abort(400)
     return "Files uploaded successfully"
     
-@app.route('/uploads/<filename>', methods=["GET"])
-def get_image(filename: str):
-    path = app.config['UPLOAD_PATH'] / filename
-    return send_file(str(path), mimetype='image/jpg')
-    
     
 @app.route('/process_images', methods=["GET"])
 def process_images():
@@ -68,7 +63,6 @@ def process_images():
         chart_file = next(DIR_FIGURES.iterdir())
         assert chart_file.exists()
         
-        # return send_file(chart_file)
         return str(chart_file)
     except Exception as e:
         app.logger.exception(e)

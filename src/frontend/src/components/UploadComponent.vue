@@ -11,7 +11,7 @@ const fileListRef = ref<UploadFileInfo[]>([])
 
 function handlePreview(file: UploadFileInfo) {
   const { name } = file
-  previewImageUrlRef.value = `${api.BASE_URL}/uploads/${name}`
+  previewImageUrlRef.value = `${api.BASE_URL}/static/uploads/${name}`
   showModalRef.value = true
 }
 
