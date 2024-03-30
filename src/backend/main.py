@@ -1,18 +1,20 @@
+from pathlib import Path
+from services.constants import DIR_CSV
 from services.data_analyzer import DataAnalyzer
 from services.digit_extractor_morphology import DigitExtractorMorphology
 from services.digit_extractor_registration import DigitExtractorRegistration
 
-CSV_NAME = "digits.csv"
+DATASET_PATH = Path("dataset/gasmeter")
 
 
 def extract_digits():
-    de = DigitExtractorMorphology(CSV_NAME)
-    # de = DigitExtractorRegistration(CSV_NAME)
+    de = DigitExtractorMorphology(DATASET_PATH, DIR_CSV)
+    # de = DigitExtractorRegistration(DATASET_PATH)
     de.process_dataset()
 
 
 def analyze():
-    da = DataAnalyzer(CSV_NAME)
+    da = DataAnalyzer(DIR_CSV)
     da.analyze()
 
 

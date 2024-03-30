@@ -2,9 +2,12 @@ import axios from 'axios'
 
 export const BASE_URL = 'http://127.0.0.1:5000'
 
+export const uploadUrl = `${BASE_URL}/upload`
+
 const api = axios.create({
-  baseURL: BASE_URL,
-  timeout: 5000
+  baseURL: BASE_URL
 })
 
-export const uploadFiles = () => {}
+export const processImages = async () => {
+  return api.get('/process_images')
+}

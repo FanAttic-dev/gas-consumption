@@ -1,3 +1,4 @@
+from pathlib import Path
 from skimage.morphology import *
 from skimage.filters import threshold_otsu
 from skimage.util import compare_images
@@ -10,8 +11,8 @@ from services.digit_extractor import DigitExtractor
 
 
 class DigitExtractorMorphology(DigitExtractor):
-    def __init__(self, csv_name: str):
-        super().__init__(csv_name)
+    def __init__(self, dataset_path: Path):
+        super().__init__(dataset_path)
 
     def img_preprocess(self, img_orig, show: bool):
         img = img_orig

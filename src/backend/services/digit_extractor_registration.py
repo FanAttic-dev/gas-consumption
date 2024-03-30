@@ -11,8 +11,8 @@ from services.digit_extractor import DigitExtractor
 class DigitExtractorRegistration(DigitExtractor):
     TEMPLATE_PATH = Path("dataset/template/template.jpg")
 
-    def __init__(self, csv_name: str):
-        super().__init__(csv_name)
+    def __init__(self, dataset_path: Path):
+        super().__init__(dataset_path)
         self.img_template = DigitExtractor.img_read(
             DigitExtractorRegistration.TEMPLATE_PATH)
 
