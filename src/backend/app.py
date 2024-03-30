@@ -4,11 +4,11 @@ from flask import url_for, request, send_file
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-from services.constants import DIR_CHARTS, DIR_CSV, MIN_IMAGES
+from services.constants import DIR_FIGURES, DIR_CSV, MIN_IMAGES
 from services.data_analyzer import DataAnalyzer
 from services.digit_extractor_morphology import DigitExtractorMorphology
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 cors = CORS(app)
 
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5 # MAX 5MB
@@ -65,10 +65,11 @@ def process_images():
         da.analyze(show=False)
         app.logger.info("Data Analyzer finised")
         
-        chart_file = next(DIR_CHARTS.iterdir())
+        chart_file = next(DIR_FIGURES.iterdir())
         assert chart_file.exists()
         
-        return send_file(chart_file)
+        # return send_file(chart_file)
+        return str(chart_file)
     except Exception as e:
         app.logger.exception(e)
         return abort(400)
