@@ -70,10 +70,14 @@ function submit() {
           :show-preview-button="true"
           @preview="handlePreview"
           @update-file-list="fileListUpdate"
-          ><n-button>Select images</n-button></n-upload
+          ><n-button v-show="!uploadStore.uploadFinished">Select images</n-button></n-upload
         >
       </n-scrollbar>
-      <n-button type="primary" :disabled="isEmpty" @click="submit"
+      <n-button
+        v-show="!uploadStore.uploadFinished"
+        type="primary"
+        :disabled="isEmpty"
+        @click="submit"
         >Upload {{ fileListCount }} images</n-button
       >
     </n-flex>

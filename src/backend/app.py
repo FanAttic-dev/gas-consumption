@@ -14,7 +14,7 @@ cors = CORS(app)
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5 # MAX 5MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg']
 app.config['UPLOAD_PATH'] = Path('static/uploads')
-app.config['UPLOAD_PATH'].mkdir(exist_ok=True)
+app.config['UPLOAD_PATH'].mkdir(exist_ok=True, parents=True)
 
 
 @app.route('/')
@@ -71,4 +71,4 @@ def process_images():
     
         
 if __name__ == "__main__":
-    app.run("127.0.0.1", 5000)
+    app.run(host='127.0.0.1', port=3000, debug=True)
