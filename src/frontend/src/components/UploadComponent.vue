@@ -2,21 +2,29 @@
 import {
   NUpload,
   NCard,
+  NFlex,
+  NScrollbar,
   NModal,
+  NButton,
   type UploadFileInfo,
   type FormInst,
   useMessage,
-  type MessageReactive
+  type MessageReactive,
+  type UploadInst
 } from 'naive-ui'
 
-import { ref } from 'vue'
-
+import { useUploadStore } from '@/stores/upload'
+import { computed, ref } from 'vue'
 import * as api from '@/api/api'
 
 const showModalRef = ref(false)
 const previewImageUrlRef = ref('')
-const fileListRef = ref<UploadFileInfo[]>([])
+const uploadRef = ref<UploadInst | null>(null)
+const isEmpty = ref(true)
+
 const message = useMessage()
+const uploadStore = useUploadStore()
+
 let uploadMessage: MessageReactive | null = null
 
 function handlePreview(file: UploadFileInfo) {
@@ -26,32 +34,45 @@ function handlePreview(file: UploadFileInfo) {
 }
 
 function fileListUpdate(fileList: UploadFileInfo[]) {
-  console.log('File list update:')
-  fileListRef.value = fileList
-  if (uploadMessage == null) {
-    uploadMessage = message.loading('Uploading...', { duration: 0 })
-  }
-  console.log(fileList)
+  isEmpty.value = !fileList.length
+
   const allUploaded = fileList.every((file) => file.status == 'finished')
+  uploadStore.setUploadFinished(allUploaded)
+
   if (allUploaded) {
     uploadMessage?.destroy()
     uploadMessage = null
+    message.success('All files uploaded')
     console.log('All files uploaded')
   }
+}
+
+function submit() {
+  if (uploadMessage == null) {
+    uploadMessage = message.loading('Uploading...', { duration: 0 })
+  }
+  setTimeout(() => uploadRef.value?.submit(), 500)
 }
 </script>
 
 <template>
-  <n-card title="1. Upload your photos">
-    <n-upload
-      accept="image/jpg"
-      :multiple="true"
-      :action="api.uploadUrl"
-      list-type="image-card"
-      :default-upload="true"
-      @preview="handlePreview"
-      @update-file-list="fileListUpdate"
-    />
+  <n-card title="1. Upload your images">
+    <n-flex>
+      <n-scrollbar style="max-height: 50vh">
+        <n-upload
+          ref="uploadRef"
+          accept="image/jpg"
+          :multiple="true"
+          :action="api.uploadUrl"
+          :default-upload="false"
+          :show-preview-button="true"
+          @preview="handlePreview"
+          @update-file-list="fileListUpdate"
+          ><n-button>Select images</n-button></n-upload
+        >
+      </n-scrollbar>
+      <n-button type="primary" :disabled="isEmpty" @click="submit">Upload images</n-button>
+    </n-flex>
     <n-modal v-model:show="showModalRef" preset="card" style="width: 600px" title="">
       <img :src="previewImageUrlRef" style="width: 100%" />
     </n-modal>
