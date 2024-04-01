@@ -20,7 +20,9 @@ import * as api from '@/api/api'
 const showModalRef = ref(false)
 const previewImageUrlRef = ref('')
 const uploadRef = ref<UploadInst | null>(null)
-const isEmpty = ref(true)
+const fileListRef = ref<UploadFileInfo[]>([])
+const fileListCount = computed(() => fileListRef.value.length)
+const isEmpty = computed(() => fileListCount.value == 0)
 
 const message = useMessage()
 const uploadStore = useUploadStore()
@@ -34,7 +36,7 @@ function handlePreview(file: UploadFileInfo) {
 }
 
 function fileListUpdate(fileList: UploadFileInfo[]) {
-  isEmpty.value = !fileList.length
+  fileListRef.value = fileList
 
   const allUploaded = fileList.every((file) => file.status == 'finished')
   uploadStore.setUploadFinished(allUploaded)
@@ -71,7 +73,9 @@ function submit() {
           ><n-button>Select images</n-button></n-upload
         >
       </n-scrollbar>
-      <n-button type="primary" :disabled="isEmpty" @click="submit">Upload images</n-button>
+      <n-button type="primary" :disabled="isEmpty" @click="submit"
+        >Upload {{ fileListCount }} images</n-button
+      >
     </n-flex>
     <n-modal v-model:show="showModalRef" preset="card" style="width: 600px" title="">
       <img :src="previewImageUrlRef" style="width: 100%" />
