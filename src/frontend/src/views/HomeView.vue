@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NFlex } from 'naive-ui'
+import { NH1, NFlex } from 'naive-ui'
 
 import UploadComponent from '@/components/UploadComponent.vue'
 import StatsComponent from '@/components/StatsComponent.vue'
@@ -8,6 +8,7 @@ import StatsComponent from '@/components/StatsComponent.vue'
 <template>
   <main>
     <n-flex>
+      <n-h1>Gas Consumption Analyzer</n-h1>
       <UploadComponent></UploadComponent>
       <StatsComponent></StatsComponent>
     </n-flex>

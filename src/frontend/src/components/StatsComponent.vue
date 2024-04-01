@@ -19,9 +19,9 @@ async function processImages() {
 </script>
 
 <template>
-  <n-card>
+  <n-card title="2. Consumption statistics">
     <n-flex>
-      <n-button type="primary" @click="processImages">Process images</n-button>
+      <n-button type="primary" @click="processImages">Analyze images</n-button>
       <n-image width="100%" :src="imgRef" />
     </n-flex>
   </n-card>
