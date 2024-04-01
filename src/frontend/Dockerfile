@@ -1,14 +1,9 @@
-FROM node:lts-alpine
-
-RUN npm install -g http-server
-
+FROM node:lts-alpine as build-stage
 COPY package*.json .
-
-RUN npm install --production
-
+RUN npm install
 COPY . .
-
 RUN npm run build
 
-EXPOSE 8080
-CMD ["http-server", "dist"]
+FROM nginx:stable-alpine as production-stage
+COPY --from=build-stage dist /app
+COPY nginx.conf /etc/nginx/nginx.conf
