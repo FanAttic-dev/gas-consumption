@@ -3,6 +3,7 @@ click==8.1.7
 contourpy==1.2.0
 cycler==0.12.1
 Flask==3.0.2
+Flask-Cors==4.0.0
 fonttools==4.50.0
 imageio==2.34.0
 itsdangerous==2.1.2
