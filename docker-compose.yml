@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+
+  backend:
+    build: ./src/backend
+    container_name: backend
+    restart: always
+    expose:
+      - 8080
+
+  nginx:
+    build: ./src/nginx
+    container_name: nginx
+    restart: always
+    ports:
+     - "80:80"
