@@ -8,17 +8,19 @@ import pytesseract
 import re
 import pandas as pd
 
+from services.constants import CSV_NAME, DIR_CSV
+
 
 class DigitExtractor:
-    DATASET_PATH = Path("dataset/gasmeter")
     IM_WIDTH = 1000
     RE_WHITESPACE_PATTERN = re.compile(r"\s")
     RE_DIGIT_PARSER_PATTERN = re.compile(r"([0-9]{4,5}),?([0-9]{0,2})")
     
-
-    def __init__(self, csv_name: str):
-        self.csv_name = csv_name
-        self.img_paths = list(DigitExtractor.DATASET_PATH.iterdir())
+    def __init__(self, dataset_path: Path):
+        self.dataset_path = dataset_path
+        DIR_CSV.mkdir(exist_ok=True, parents=True)
+        self.csv_path = DIR_CSV / CSV_NAME
+        self.img_paths = list(dataset_path.iterdir())
 
     @staticmethod
     def img_read(img_path: Path):
@@ -74,6 +76,10 @@ class DigitExtractor:
             print(digits)
             return
         
+        if self.csv_path.exists():
+            print(str(self.csv_path), "already exists, skipping processing.")
+            return
+        
         d = {
             "idx": [],
             "img_name": [],
@@ -90,7 +96,7 @@ class DigitExtractor:
             d["digits"].append(digits)
             
         df = pd.DataFrame.from_dict(d)
-        df.to_csv(self.csv_name)
+        df.to_csv(self.csv_path)
         
 
 
