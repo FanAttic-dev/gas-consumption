@@ -4,6 +4,7 @@ import { NButton, NSpin, NFlex, NCard, NImage, useMessage } from 'naive-ui'
 import * as api from '@/api/api'
 import { ref } from 'vue'
 import { useUploadStore } from '@/stores/upload'
+import axios from 'axios'
 
 const message = useMessage()
 const store = useUploadStore()
@@ -17,7 +18,11 @@ async function processImages() {
     console.log(res.data)
     imgRef.value = `${api.BASE_URL}/${res.data}`
   } catch (err) {
-    message.error(err.response.data)
+    if (axios.isAxiosError(err) && err.response) {
+      message.error(err.response.data)
+    } else {
+      console.error(err)
+    }
   } finally {
     showSpin.value = false
   }
