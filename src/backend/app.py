@@ -1,5 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
+import shutil
 from flask import Flask, abort, jsonify
 from flask import url_for, request, send_file
 from flask_cors import CORS
@@ -42,7 +43,14 @@ def user_lookup_callback(_jwt_header, jwt_data):
 def get_current_user_folder() -> Path:
     user = get_current_user()
     user_folder = FILES_FOLDER / str(user.id)
+    user_folder.mkdir(parents=True, exist_ok=True)
     return user_folder
+
+def get_current_user_uploads_folder() -> Path:
+    user_folder = get_current_user_folder()
+    uploads_folder = user_folder / UPLOADS_DIRNAME
+    uploads_folder.mkdir(parents=True, exist_ok=True)
+    return uploads_folder
 
 @app.route('/')
 @jwt_required()
@@ -100,14 +108,23 @@ def get_image(image_name: str):
         return str(uploads_folder / image_name)
     except Exception as e:
         return str(e), 400
+    
+@app.route('/uploads', methods=["GET"])
+@jwt_required()
+def get_all_images():
+    try:
+        uploads_folder = get_current_user_uploads_folder()
+        
+        images = list(map(lambda image: image.name, uploads_folder.iterdir()))
+        return jsonify(images)
+    except Exception as e:
+        return str(e), 400
    
 @app.route('/upload', methods=["POST"])
 @jwt_required()
 def upload_images():
     try:
-        user_folder = get_current_user_folder()
-        uploads_folder = user_folder / UPLOADS_DIRNAME
-        uploads_folder.mkdir(parents=True, exist_ok=True)
+        uploads_folder = get_current_user_uploads_folder()
         
         for file in request.files.getlist('file'):
             file.filename = secure_filename(file.filename)
@@ -120,6 +137,12 @@ def upload_images():
     except Exception as e:
         return str(e), 400
     
+@app.route('/clear_images', methods=["GET"])
+@jwt_required()
+def clear_images():
+    uploads_folder = get_current_user_uploads_folder()
+    shutil.rmtree(uploads_folder)
+    return "Images cleared"
     
 @app.route('/process_images', methods=["GET"])
 @jwt_required()
@@ -150,7 +173,6 @@ def process_images():
     except Exception as e:
         app.logger.exception(e)
         return abort(400)
-    
     
         
 if __name__ == "__main__":

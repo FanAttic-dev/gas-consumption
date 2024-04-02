@@ -32,9 +32,7 @@ async function processImages() {
   <n-card title="2. Consumption statistics">
     <n-spin :show="showSpin">
       <n-flex>
-        <n-button type="primary" :disabled="!store.uploadFinished" @click="processImages"
-          >Analyze images</n-button
-        >
+        <n-button type="primary" @click="processImages">Analyze images</n-button>
         <n-image width="100%" :src="imgRef" />
       </n-flex>
     </n-spin>

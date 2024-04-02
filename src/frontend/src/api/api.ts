@@ -40,3 +40,11 @@ export const login = async (user: User) => {
 export const getImage = async (name: string) => {
   return api.get(`/uploads/${name}`)
 }
+
+export const getAllImages = async () => {
+  return api.get('/uploads')
+}
+
+export const clearImages = async () => {
+  return api.get('/clear_images')
+}

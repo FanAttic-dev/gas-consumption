@@ -22,15 +22,18 @@ import router from '@/router'
 const showModalRef = ref(false)
 const previewImageUrlRef = ref('')
 const uploadRef = ref<UploadInst | null>(null)
-const fileListRef = ref<UploadFileInfo[]>([])
-const fileListCount = computed(() => fileListRef.value.length)
-const isEmpty = computed(() => fileListCount.value == 0)
 
 const message = useMessage()
 const uploadStore = useUploadStore()
 const userStore = useUserStore()
 
 let uploadMessage: MessageReactive | null = null
+
+async function clearImages() {
+  await api.clearImages()
+  await fetchImages()
+  message.success('All files cleared')
+}
 
 async function handlePreview(file: UploadFileInfo) {
   const { name } = file
@@ -40,7 +43,10 @@ async function handlePreview(file: UploadFileInfo) {
 }
 
 function fileListUpdate(fileList: UploadFileInfo[]) {
-  fileListRef.value = fileList
+  uploadStore.fileList = fileList
+  // uploadStore.updateItemCount(fileList.length)
+  console.log('file list update')
+  console.log(fileList.length)
 
   const allUploaded = fileList.every((file) => file.status == 'finished')
   uploadStore.setUploadFinished(allUploaded)
@@ -53,16 +59,20 @@ function fileListUpdate(fileList: UploadFileInfo[]) {
   }
 }
 
-function submit() {
-  if (uploadMessage == null) {
-    uploadMessage = message.loading('Uploading...', { duration: 0 })
-  }
-  setTimeout(() => uploadRef.value?.submit(), 500)
+async function fetchImages() {
+  const res = await api.getAllImages()
+  console.log(res.data)
+  uploadStore.fileList = res.data.map((name: string, idx: number) => {
+    return {
+      id: name,
+      name: name,
+      status: 'finished'
+    }
+  })
 }
 
 onMounted(async () => {
-  await userStore.autoLogin()
-  router.replace({ name: 'home' })
+  await fetchImages()
 })
 </script>
 
@@ -75,20 +85,21 @@ onMounted(async () => {
           accept="image/jpg"
           :multiple="true"
           :action="api.uploadUrl"
+          :file-list="uploadStore.fileList"
           :headers="{
             Authorization: `Bearer ${userStore.user.token}`
           }"
-          :default-upload="false"
           :show-preview-button="true"
+          :show-remove-button="false"
           @preview="handlePreview"
           @update-file-list="fileListUpdate"
-          ><n-button v-show="!uploadStore.uploadFinished">Select images</n-button></n-upload
+          ><n-button>Select images</n-button></n-upload
         >
       </n-scrollbar>
-      <n-button type="primary" :disabled="isEmpty" @click="submit"
-        >Upload {{ fileListCount }} images</n-button
-      >
     </n-flex>
+    <div style="width: 100; display: flex; justify-content: end">
+      <n-button @click="clearImages" type="error">Clear images</n-button>
+    </div>
     <n-modal v-model:show="showModalRef" preset="card" style="width: 600px" title="">
       <img :src="previewImageUrlRef" style="width: 100%" />
     </n-modal>
