@@ -43,6 +43,34 @@ def validate_file(file) -> bool:
     
     return True
 
+@app.route('/register', methods=["POST"])
+def register():
+    json = request.get_json()
+    name = json["name"]
+    password = json["password"]
+    
+    user = User.query.filter_by(name=name).first()
+    if user is not None:
+        return "User already exists. Please, log in.", 400
+        
+    user = User(name, password)
+    db.session.add(user)
+    db.session.commit()
+    return "User successfully created!"
+
+@app.route('/login', methods=["POST"])
+def login():
+    json = request.get_json()
+    
+    user = User.authenticate(**json)
+    if not user:
+        return "User does not exist. Please, register", 400
+        
+    # create access token
+    
+    return "User successfully logged in!"
+
+
 @app.route('/upload', methods=["POST"])
 def upload_images():
     # TODO: solve users
