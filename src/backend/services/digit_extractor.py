@@ -20,7 +20,7 @@ class DigitExtractor:
         self.dataset_path = dataset_path
         DIR_CSV.mkdir(exist_ok=True, parents=True)
         self.csv_path = DIR_CSV / CSV_NAME
-        self.img_paths = list(dataset_path.iterdir())
+        self.img_paths: list[Path] = list(dataset_path.iterdir())
 
     @staticmethod
     def img_read(img_path: Path):
@@ -47,17 +47,13 @@ class DigitExtractor:
 
     @staticmethod
     def img_to_string(img):
-        try:
-            txt = pytesseract.image_to_string(
-                img, config='-c tessedit_char_whitelist=0123456789-,m'
-            )
-            txt = re.sub(DigitExtractor.RE_WHITESPACE_PATTERN, "", txt)
-            match = re.search(DigitExtractor.RE_DIGIT_PARSER_PATTERN, txt)
-            txt = ",".join(match.groups())
-            return txt
-        except Exception as e:
-            print(e)
-            return ""
+        txt = pytesseract.image_to_string(
+            img, config='-c tessedit_char_whitelist=0123456789-,m'
+        )
+        txt = re.sub(DigitExtractor.RE_WHITESPACE_PATTERN, "", txt)
+        match = re.search(DigitExtractor.RE_DIGIT_PARSER_PATTERN, txt)
+        txt = ",".join(match.groups())
+        return txt
 
     def extract_digits(self, img_orig, show=True) -> str:
         img = self.img_preprocess(img_orig, show)
@@ -86,14 +82,17 @@ class DigitExtractor:
             "digits": []
         }
         for i, img_path in enumerate(self.img_paths):
-            print(i)
-            img = DigitExtractor.img_read(img_path)
-            digits = self.extract_digits(img, show=False)
-            print(digits)
-            
-            d["idx"].append(i)
-            d["img_name"].append(img_path.name)
-            d["digits"].append(digits)
+            try:
+                img = DigitExtractor.img_read(img_path)
+                digits = self.extract_digits(img, show=False)
+                
+                print(f"[{i}: {img_path.name}] {digits}")
+                
+                d["idx"].append(i)
+                d["img_name"].append(img_path.name)
+                d["digits"].append(digits)
+            except Exception as e:
+                print(e)
             
         df = pd.DataFrame.from_dict(d)
         df.to_csv(self.csv_path)
