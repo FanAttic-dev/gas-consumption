@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 
 from services.database import db
+from services.models import User
 from services.constants import DIR_FIGURES, DIR_CSV, MIN_IMAGES
 from services.data_analyzer import DataAnalyzer
 from services.digit_extractor_morphology import DigitExtractorMorphology
@@ -22,8 +23,11 @@ app.config['UPLOAD_EXTENSIONS'] = ['.jpg']
 app.config['UPLOAD_PATH'] = Path('static/uploads')
 app.config['UPLOAD_PATH'].mkdir(exist_ok=True, parents=True)
 
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db)
+
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def index():

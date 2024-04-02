@@ -1,17 +1,15 @@
-from app import db
+from services.database import db
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
-    __tablename__ = 'users'
-    
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     
     def __init__(self, name, password):
         self.name = name
-        self.password = generate_password_hash(password, method='sha256')
+        self.password = generate_password_hash(password)
         
     @classmethod
     def authenticate(cls, **kwargs):
