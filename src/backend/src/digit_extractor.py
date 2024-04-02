@@ -8,7 +8,7 @@ import pytesseract
 import re
 import pandas as pd
 
-from services.constants import CSV_NAME, DIR_CSV
+from src.constants import CSV_NAME, DIR_CSV
 
 
 class DigitExtractor:
@@ -97,8 +97,3 @@ class DigitExtractor:
         df = pd.DataFrame.from_dict(d)
         df.to_csv(self.csv_path)
         
-
-
-
-# fig, ax = try_all_threshold(img, figsize=(10, 8), verbose=False)
-# plt.show()

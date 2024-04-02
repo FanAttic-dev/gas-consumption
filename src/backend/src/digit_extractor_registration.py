@@ -5,7 +5,7 @@ import cv2
 from matplotlib import pyplot as plt
 from PIL import Image
 
-from services.digit_extractor import DigitExtractor
+from src.digit_extractor import DigitExtractor
 
 
 class DigitExtractorRegistration(DigitExtractor):

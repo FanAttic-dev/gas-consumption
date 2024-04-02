@@ -7,7 +7,7 @@ from datetime import datetime
 import matplotlib.dates as mdates
 import matplotlib
 
-from services.constants import CSV_NAME, DIR_FIGURES, DIR_CSV, MIN_IMAGES
+from src.constants import CSV_NAME, DIR_FIGURES, DIR_CSV, MIN_IMAGES
 
 
 class DataAnalyzer:
