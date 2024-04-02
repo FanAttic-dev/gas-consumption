@@ -9,11 +9,14 @@ import {
   useMessage,
   type FormInst
 } from 'naive-ui'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import * as api from '@/api/api'
 import type { User } from '@/types/user'
 import axios from 'axios'
+import { useUserStore } from '@/stores/user'
+import router from '@/router'
 
+const userStore = useUserStore()
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const formValue = ref<User>({
@@ -38,30 +41,36 @@ async function login(e: MouseEvent) {
   e.preventDefault()
 
   try {
-    const res = await api.login(formValue.value)
-    console.log(res)
+    await userStore.login(formValue.value)
   } catch (err) {
     if (axios.isAxiosError(err) && err.response) {
-      message.error(err.response.data)
+      message.error(err.response.data.message)
     } else {
       console.error(err)
     }
   }
 }
+
 async function register(e: MouseEvent) {
   e.preventDefault()
 
   try {
-    const res = await api.register(formValue.value)
-    console.log(res)
+    await userStore.register(formValue.value)
   } catch (err) {
     if (axios.isAxiosError(err) && err.response) {
-      message.error(err.response.data)
+      message.error(err.response.data.message)
     } else {
       console.error(err)
     }
   }
 }
+
+onMounted(async () => {
+  await userStore.autoLogin()
+  if (userStore.isLoggedIn) {
+    router.replace({ name: 'home' })
+  }
+})
 </script>
 
 <template>

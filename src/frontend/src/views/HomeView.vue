@@ -1,14 +1,40 @@
 <script setup lang="ts">
-import { NH1, NFlex } from 'naive-ui'
+import { NH1, NFlex, NButton } from 'naive-ui'
 
 import UploadComponent from '@/components/UploadComponent.vue'
 import StatsComponent from '@/components/StatsComponent.vue'
+import { useUserStore } from '@/stores/user'
+import router from '@/router'
+import { onMounted } from 'vue'
+import { useUploadStore } from '@/stores/upload'
+
+const userStore = useUserStore()
+const uploadStore = useUploadStore()
+
+function logout(e: MouseEvent) {
+  e.preventDefault()
+
+  userStore.logout()
+  router.replace({ name: 'login' })
+}
+
+onMounted(async () => {
+  uploadStore.$reset()
+
+  await userStore.autoLogin()
+  if (!userStore.isLoggedIn) {
+    router.replace({ name: 'login' })
+  }
+})
 </script>
 
 <template>
   <main>
     <n-flex>
-      <n-h1>Gas Consumption Analyzer</n-h1>
+      <n-flex style="width: 100%" justify="space-between">
+        <n-h1>Gas Consumption Analyzer</n-h1>
+        <n-button @click="logout" type="error" ghost>Logout </n-button>
+      </n-flex>
       <UploadComponent></UploadComponent>
       <StatsComponent></StatsComponent>
     </n-flex>

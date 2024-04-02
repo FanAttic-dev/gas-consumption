@@ -14,8 +14,10 @@ import {
 } from 'naive-ui'
 
 import { useUploadStore } from '@/stores/upload'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import * as api from '@/api/api'
+import { useUserStore } from '@/stores/user'
+import router from '@/router'
 
 const showModalRef = ref(false)
 const previewImageUrlRef = ref('')
@@ -26,6 +28,7 @@ const isEmpty = computed(() => fileListCount.value == 0)
 
 const message = useMessage()
 const uploadStore = useUploadStore()
+const userStore = useUserStore()
 
 let uploadMessage: MessageReactive | null = null
 
@@ -55,6 +58,11 @@ function submit() {
   }
   setTimeout(() => uploadRef.value?.submit(), 500)
 }
+
+onMounted(async () => {
+  await userStore.autoLogin()
+  router.replace({ name: 'home' })
+})
 </script>
 
 <template>
@@ -66,6 +74,9 @@ function submit() {
           accept="image/jpg"
           :multiple="true"
           :action="api.uploadUrl"
+          :headers="{
+            Authorization: `Bearer ${userStore.user.token}`
+          }"
           :default-upload="false"
           :show-preview-button="true"
           @preview="handlePreview"
