@@ -36,3 +36,7 @@ export const register = async (user: User) => {
 export const login = async (user: User) => {
   return api.post('/login', user)
 }
+
+export const getImage = async (name: string) => {
+  return api.get(`/uploads/${name}`)
+}

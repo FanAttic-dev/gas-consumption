@@ -1,15 +1,16 @@
+from datetime import timedelta
 from pathlib import Path
 from flask import Flask, abort, jsonify
 from flask import url_for, request, send_file
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import create_access_token, set_access_cookies, jwt_required, unset_jwt_cookies, JWTManager
+from flask_jwt_extended import create_access_token, set_access_cookies, jwt_required, unset_jwt_cookies, JWTManager, get_current_user
 from werkzeug.utils import secure_filename
 
 from services.database import db
 from services.models import User
-from services.constants import DIR_FIGURES, DIR_CSV, MIN_IMAGES
+from services.constants import FIGURES_DIRNAME, CSV_DIRNAME, FILES_FOLDER, MIN_IMAGES, TOKEN_EXPIRATION_DELTA_MINS, UPLOADS_DIRNAME
 from services.data_analyzer import DataAnalyzer
 from services.digit_extractor_morphology import DigitExtractorMorphology
 
@@ -23,9 +24,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5 # MAX 5MB
-app.config['UPLOAD_EXTENSIONS'] = ['.jpg']
-app.config['UPLOAD_PATH'] = Path('static/uploads')
-app.config['UPLOAD_PATH'].mkdir(exist_ok=True, parents=True)
+app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.JPG']
 
 jwt = JWTManager(app)
 db.init_app(app)
@@ -33,6 +32,17 @@ migrate = Migrate(app, db)
 
 with app.app_context():
     db.create_all()
+    
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return User.query.filter_by(id=identity).one_or_none()
+
+
+def get_current_user_folder() -> Path:
+    user = get_current_user()
+    user_folder = FILES_FOLDER / str(user.id)
+    return user_folder
 
 @app.route('/')
 @jwt_required()
@@ -76,43 +86,64 @@ def login():
     if not user:
         return jsonify({'success': False, 'message': "User does not exist. Please, register."}), 400
         
-    access_token = create_access_token(identity=user.id)
+    access_token = create_access_token(identity=user.id, expires_delta=timedelta(minutes=TOKEN_EXPIRATION_DELTA_MINS))
     
     response = jsonify({'success': True, 'token': access_token})
     return response, 200
    
+@app.route('/uploads/<image_name>', methods=["GET"])
+@jwt_required()
+def get_image(image_name: str):
+    try:
+        user = get_current_user()
+        uploads_folder = FILES_FOLDER / str(user.id) / UPLOADS_DIRNAME
+        return str(uploads_folder / image_name)
+    except Exception as e:
+        return str(e), 400
+   
 @app.route('/upload', methods=["POST"])
 @jwt_required()
 def upload_images():
-    # TODO: solve users
-    
-    for file in request.files.getlist('file'):
-        file.filename = secure_filename(file.filename)
-        if validate_file(file):
-            file.save(app.config['UPLOAD_PATH'] / file.filename)
-        else:
-            abort(400)
-    return "Files uploaded successfully"
+    try:
+        user_folder = get_current_user_folder()
+        uploads_folder = user_folder / UPLOADS_DIRNAME
+        uploads_folder.mkdir(parents=True, exist_ok=True)
+        
+        for file in request.files.getlist('file'):
+            file.filename = secure_filename(file.filename)
+            if validate_file(file):
+                file.save(str(uploads_folder / file.filename))
+            else:
+                raise "File validation failed"
+            
+        return "Files uploaded successfully", 200
+    except Exception as e:
+        return str(e), 400
     
     
 @app.route('/process_images', methods=["GET"])
 @jwt_required()
 def process_images():
-    paths = list(app.config['UPLOAD_PATH'].iterdir())
+    user_folder = get_current_user_folder()
+    csv_folder = user_folder / CSV_DIRNAME
+    figures_folder = user_folder / FIGURES_DIRNAME
+    uploads_folder = user_folder / UPLOADS_DIRNAME
+    paths = list(uploads_folder.iterdir())
+    
     if len(paths) < MIN_IMAGES:
         return f"Not enough images uploaded: {len(paths)}/{MIN_IMAGES}", 404
     
     try:
-        de = DigitExtractorMorphology(app.config['UPLOAD_PATH'])
+        de = DigitExtractorMorphology(uploads_folder, csv_folder)
         app.logger.info("Digit Extractor created, processing dataset...")
         de.process_dataset()
         app.logger.info("Dataset processed")
-        da = DataAnalyzer()
+        da = DataAnalyzer(csv_folder, figures_folder)
         app.logger.info("Data Analyzer created, analyzing...")
         da.analyze(show=False)
         app.logger.info("Data Analyzer finised")
         
-        chart_file = next(DIR_FIGURES.iterdir())
+        chart_file = next(figures_folder.iterdir())
         assert chart_file.exists()
         
         return str(chart_file)

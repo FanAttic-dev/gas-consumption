@@ -1,6 +1,6 @@
 __pycache__/
 .venv/
 dataset/
-static/
 migrations/
 instance/
+static/

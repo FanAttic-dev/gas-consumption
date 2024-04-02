@@ -15,7 +15,6 @@ async function processImages() {
   try {
     showSpin.value = true
     const res = await api.processImages()
-    console.log(res.data)
     imgRef.value = `${api.BASE_URL}/${res.data}`
   } catch (err) {
     if (axios.isAxiosError(err) && err.response) {

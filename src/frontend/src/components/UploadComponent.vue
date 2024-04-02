@@ -32,9 +32,10 @@ const userStore = useUserStore()
 
 let uploadMessage: MessageReactive | null = null
 
-function handlePreview(file: UploadFileInfo) {
+async function handlePreview(file: UploadFileInfo) {
   const { name } = file
-  previewImageUrlRef.value = `${api.BASE_URL}/static/uploads/${name}`
+  const res = await api.getImage(name)
+  previewImageUrlRef.value = `${api.BASE_URL}/${res.data}`
   showModalRef.value = true
 }
 
@@ -84,11 +85,7 @@ onMounted(async () => {
           ><n-button v-show="!uploadStore.uploadFinished">Select images</n-button></n-upload
         >
       </n-scrollbar>
-      <n-button
-        v-show="!uploadStore.uploadFinished"
-        type="primary"
-        :disabled="isEmpty"
-        @click="submit"
+      <n-button type="primary" :disabled="isEmpty" @click="submit"
         >Upload {{ fileListCount }} images</n-button
       >
     </n-flex>
