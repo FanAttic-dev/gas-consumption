@@ -2,11 +2,8 @@ from pathlib import Path
 from flask import Flask, abort
 from flask import url_for, request, send_file
 from flask_cors import CORS
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 
-from services.database import db
 from services.constants import DIR_FIGURES, DIR_CSV, MIN_IMAGES
 from services.data_analyzer import DataAnalyzer
 from services.digit_extractor_morphology import DigitExtractorMorphology
@@ -14,16 +11,11 @@ from services.digit_extractor_morphology import DigitExtractorMorphology
 app = Flask(__name__, static_url_path='/static')
 cors = CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///db.sqlite"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024 * 5 # MAX 5MB
 app.config['UPLOAD_EXTENSIONS'] = ['.jpg']
 app.config['UPLOAD_PATH'] = Path('static/uploads')
 app.config['UPLOAD_PATH'].mkdir(exist_ok=True, parents=True)
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
 @app.route('/')
 def index():
