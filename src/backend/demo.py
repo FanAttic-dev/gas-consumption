@@ -5,18 +5,18 @@ from services.digit_extractor_morphology import DigitExtractorMorphology
 from services.digit_extractor_registration import DigitExtractorRegistration
 
 DATASET_PATH = Path("dataset/gasmeter")
-FILES_PATH = Path("files")
+TMP_PATH = Path("tmp")
 SHOW = True
 
 
 def extract_digits():
-    de = DigitExtractorMorphology(DATASET_PATH, FILES_PATH / CSV_DIRNAME)
+    de = DigitExtractorMorphology(DATASET_PATH, TMP_PATH / CSV_DIRNAME)
     # de = DigitExtractorRegistration(DATASET_PATH)
     de.process_dataset(show=SHOW)
 
 
 def analyze():
-    da = DataAnalyzer(FILES_PATH / CSV_DIRNAME, FILES_PATH / FIGURES_DIRNAME)
+    da = DataAnalyzer(TMP_PATH / CSV_DIRNAME, TMP_PATH / FIGURES_DIRNAME)
     da.analyze(SHOW)
 
 
