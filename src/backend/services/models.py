@@ -30,6 +30,7 @@ class User(db.Model):
         user = User(name, password)
         db.session.add(user)
         db.session.commit()
+        return user
         
 
     def to_dict(self):
