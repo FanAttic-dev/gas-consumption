@@ -72,9 +72,9 @@ class DigitExtractor:
             print(digits)
             return
         
-        if self.csv_path.exists():
-            print(str(self.csv_path), "already exists, skipping processing.")
-            return
+        # if self.csv_path.exists():
+        #     print(str(self.csv_path), "already exists, skipping processing.")
+        #     return
         
         d = {
             "idx": [],
