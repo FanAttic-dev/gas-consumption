@@ -3,7 +3,6 @@ A solution for the [gas consumption assignment](assets/assignment.pdf).
 
 Attila Zsíros, 2024
  
-## Dashboard screenshot
 <img src="assets/dashboard.png" alt="Dashboard" width="100%"/>
 
 ## Run it on your own
