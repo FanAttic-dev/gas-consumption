@@ -67,12 +67,12 @@ class DataAnalyzer:
     def analyze(self, show: bool):
         if not show:
             matplotlib.use('agg')
-        
+                    
         self.df = self.discard_na_outliers_LOF(self.df)
         
         fig, ax = plt.subplots(1, 2, figsize=(8, 3))
         self.plot_gas_meter_values(ax[0])
         self.plot_mean_gas_consumption_per_month(ax[1])
-        plt.savefig(self.figures_folder / FIGURE_FILENAME)
         if show:
             plt.show()
+        plt.savefig(self.figures_folder / FIGURE_FILENAME)

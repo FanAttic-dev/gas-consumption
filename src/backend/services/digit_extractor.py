@@ -64,11 +64,11 @@ class DigitExtractor:
 
         return txt
 
-    def process_dataset(self, img_idx=-1):
+    def process_dataset(self, show=False, img_idx=-1):
         if img_idx > -1:
             print(img_idx)
             img = DigitExtractor.img_read(self.img_paths[img_idx])
-            digits = self.extract_digits(img, show=False)
+            digits = self.extract_digits(img, show=show)
             print(digits)
             return
         
@@ -84,7 +84,7 @@ class DigitExtractor:
         for i, img_path in enumerate(self.img_paths):
             try:
                 img = DigitExtractor.img_read(img_path)
-                digits = self.extract_digits(img, show=False)
+                digits = self.extract_digits(img, show=show)
                 
                 print(f"[{i}: {img_path.name}] {digits}")
                 
