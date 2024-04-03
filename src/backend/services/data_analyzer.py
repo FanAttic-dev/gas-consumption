@@ -32,7 +32,7 @@ class DataAnalyzer:
         n_na = df["digits"].isna().sum()
 
         df = df.dropna()
-        clf = LocalOutlierFactor(n_neighbors=MIN_IMAGES, contamination=0.3)
+        clf = LocalOutlierFactor(n_neighbors=20, contamination=0.3)
         X = np.reshape(df["digits"], (-1, 1))
 
         y_pred = clf.fit_predict(X)

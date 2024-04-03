@@ -2,11 +2,10 @@ from datetime import timedelta
 from pathlib import Path
 import shutil
 from flask import Flask, abort, jsonify
-from flask import url_for, request, send_file
+from flask import request
 from flask_cors import CORS
 from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
-from flask_jwt_extended import create_access_token, set_access_cookies, jwt_required, unset_jwt_cookies, JWTManager, get_current_user
+from flask_jwt_extended import create_access_token, jwt_required, JWTManager, get_current_user
 from werkzeug.utils import secure_filename
 
 from services.database import db
