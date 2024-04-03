@@ -11,8 +11,8 @@ from services.digit_extractor import DigitExtractor
 
 
 class DigitExtractorMorphology(DigitExtractor):
-    def __init__(self, dataset_path: Path):
-        super().__init__(dataset_path)
+    def __init__(self, dataset_path: Path, csv_dir: Path):
+        super().__init__(dataset_path, csv_dir)
 
     def img_preprocess(self, img_orig, show: bool):
         img = img_orig

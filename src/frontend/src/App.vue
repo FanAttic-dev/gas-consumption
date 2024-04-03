@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import HomeView from '@/views/HomeView.vue'
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import { NMessageProvider } from 'naive-ui'
 </script>
 

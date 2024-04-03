@@ -7,13 +7,14 @@ from datetime import datetime
 import matplotlib.dates as mdates
 import matplotlib
 
-from services.constants import CSV_NAME, DIR_FIGURES, DIR_CSV, MIN_IMAGES
+from services.constants import CSV_FILENAME, FIGURE_FILENAME, FIGURES_DIRNAME, CSV_DIRNAME, MIN_IMAGES
 
 
 class DataAnalyzer:
-    def __init__(self):
-        DIR_FIGURES.mkdir(exist_ok=True, parents=True)
-        csv_path = DIR_CSV / CSV_NAME
+    def __init__(self, csv_folder: Path, figures_folder: Path):
+        self.figures_folder = figures_folder
+        figures_folder.mkdir(exist_ok=True, parents=True)
+        csv_path = csv_folder / CSV_FILENAME
         self.df = pd.read_csv(csv_path, decimal=',')
         self.df["digits"] = self.df["digits"].astype(float)
         self.df["date"] = self.df["img_name"].apply(
@@ -72,6 +73,6 @@ class DataAnalyzer:
         fig, ax = plt.subplots(1, 2, figsize=(8, 3))
         self.plot_gas_meter_values(ax[0])
         self.plot_mean_gas_consumption_per_month(ax[1])
-        plt.savefig(DIR_FIGURES / "figure.jpg")
+        plt.savefig(self.figures_folder / FIGURE_FILENAME)
         if show:
             plt.show()

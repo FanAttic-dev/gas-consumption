@@ -8,7 +8,7 @@ import pytesseract
 import re
 import pandas as pd
 
-from services.constants import CSV_NAME, DIR_CSV
+from services.constants import CSV_FILENAME, CSV_DIRNAME
 
 
 class DigitExtractor:
@@ -16,10 +16,10 @@ class DigitExtractor:
     RE_WHITESPACE_PATTERN = re.compile(r"\s")
     RE_DIGIT_PARSER_PATTERN = re.compile(r"([0-9]{4,5}),?([0-9]{0,2})")
     
-    def __init__(self, dataset_path: Path):
+    def __init__(self, dataset_path: Path, csv_dir: Path):
         self.dataset_path = dataset_path
-        DIR_CSV.mkdir(exist_ok=True, parents=True)
-        self.csv_path = DIR_CSV / CSV_NAME
+        csv_dir.mkdir(exist_ok=True, parents=True)
+        self.csv_path = csv_dir / CSV_FILENAME
         self.img_paths: list[Path] = list(dataset_path.iterdir())
 
     @staticmethod
@@ -72,9 +72,9 @@ class DigitExtractor:
             print(digits)
             return
         
-        if self.csv_path.exists():
-            print(str(self.csv_path), "already exists, skipping processing.")
-            return
+        # if self.csv_path.exists():
+        #     print(str(self.csv_path), "already exists, skipping processing.")
+        #     return
         
         d = {
             "idx": [],
