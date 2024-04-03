@@ -22,4 +22,10 @@ The application could be published to the internet by hosting it locally and con
    - It uses mainly mathematical morphology techniques for preprocessing and [pytesseract](https://pypi.org/project/pytesseract/) for OCR.
  - Since the digit extraction algorithm is not perfect, it may produce incorrect values. Thus, when plotting the consumption, the application does outlier filtering based on 20 neighbors using the [LocalOutlierFactor](https://scikit-learn.org/stable/modules/generated/sklearn.neighbors.LocalOutlierFactor.html) algorithm.
    - The parameters for this algorithm were chosen to work properly with the provided dataset.
-   - As a future improvement, the user could be given control inputs for setting these outlier filtering parameters.
+   - [ ] As a future improvement, the user could be given control inputs for setting these outlier filtering parameters.
+- [ ] Provide download button for the CSV file
+- [ ] Add progressbar to the analysis section
+- [ ] Use Docker healthchecks
+- [ ] ZIP files for better upload
+- [ ] Use authentication when accessing files in the `static` folder.
+- [ ] Use refresh tokens for JWT.
