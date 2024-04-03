@@ -4,7 +4,7 @@ import type { UploadFileInfo } from 'naive-ui'
 export const useUploadStore = defineStore('upload', {
   state: () => {
     return {
-      uploadFinished: false,
+      uploadFinished: true,
       fileList: [] as UploadFileInfo[]
     }
   },
@@ -13,7 +13,5 @@ export const useUploadStore = defineStore('upload', {
       this.uploadFinished = status
     }
   },
-  getters: {
-    enoughImagesUploaded: (state) => state.fileList.length > 20
-  }
+  getters: {}
 })

@@ -6,6 +6,7 @@ import {
   NScrollbar,
   NModal,
   NButton,
+  NSpin,
   type UploadFileInfo,
   useMessage,
   type MessageReactive,
@@ -21,12 +22,11 @@ import axios from 'axios'
 const showModalRef = ref(false)
 const previewImageUrlRef = ref('')
 const uploadRef = ref<UploadInst | null>(null)
+const showSpinRef = ref(false)
 
 const message = useMessage()
 const uploadStore = useUploadStore()
 const userStore = useUserStore()
-
-let uploadMessage: MessageReactive | null = null
 
 async function clearImages() {
   await api.clearImages()
@@ -48,10 +48,11 @@ function fileListUpdate(fileList: UploadFileInfo[]) {
   uploadStore.setUploadFinished(allUploaded)
 
   if (allUploaded) {
-    uploadMessage?.destroy()
-    uploadMessage = null
+    showSpinRef.value = false
     message.success('All files uploaded')
     console.log('All files uploaded')
+  } else {
+    showSpinRef.value = true
   }
 }
 
@@ -81,30 +82,32 @@ onMounted(async () => {
 
 <template>
   <n-card title="1. Upload your images">
-    <n-flex>
-      <n-scrollbar style="max-height: 50vh">
-        <n-upload
-          ref="uploadRef"
-          accept="image/jpg"
-          :multiple="true"
-          :action="api.uploadUrl"
-          :file-list="uploadStore.fileList"
-          :headers="{
-            Authorization: `Bearer ${userStore.user.token}`
-          }"
-          :show-preview-button="true"
-          :show-remove-button="false"
-          @preview="handlePreview"
-          @update-file-list="fileListUpdate"
-          ><n-button>Select images</n-button></n-upload
-        >
-      </n-scrollbar>
-    </n-flex>
-    <div style="width: 100; display: flex; justify-content: end">
-      <n-button @click="clearImages" type="error">Clear images</n-button>
-    </div>
-    <n-modal v-model:show="showModalRef" preset="card" style="width: 600px" title="">
-      <img :src="previewImageUrlRef" style="width: 100%" />
-    </n-modal>
+    <n-spin :show="showSpinRef">
+      <n-flex>
+        <n-scrollbar style="max-height: 50vh">
+          <n-upload
+            ref="uploadRef"
+            accept="image/jpg"
+            :multiple="true"
+            :action="api.uploadUrl"
+            :file-list="uploadStore.fileList"
+            :headers="{
+              Authorization: `Bearer ${userStore.user.token}`
+            }"
+            :show-preview-button="true"
+            :show-remove-button="false"
+            @preview="handlePreview"
+            @update-file-list="fileListUpdate"
+            ><n-button>Select images</n-button></n-upload
+          >
+        </n-scrollbar>
+      </n-flex>
+      <div style="width: 100; display: flex; justify-content: end">
+        <n-button @click="clearImages" type="error">Clear images</n-button>
+      </div>
+      <n-modal v-model:show="showModalRef" preset="card" style="width: 600px" title="">
+        <img :src="previewImageUrlRef" style="width: 100%" />
+      </n-modal>
+    </n-spin>
   </n-card>
 </template>

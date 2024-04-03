@@ -4,8 +4,10 @@ import { NButton, NSpin, NFlex, NCard, NImage, useMessage } from 'naive-ui'
 import * as api from '@/api/api'
 import { ref } from 'vue'
 import axios from 'axios'
+import { useUploadStore } from '@/stores/upload'
 
 const message = useMessage()
+const uploadStore = useUploadStore()
 const imgRef = ref<string>()
 const showSpin = ref(false)
 
@@ -30,7 +32,9 @@ async function processImages() {
   <n-card title="2. Consumption statistics">
     <n-spin :show="showSpin">
       <n-flex>
-        <n-button type="primary" @click="processImages">Analyze images</n-button>
+        <n-button type="primary" :disabled="!uploadStore.uploadFinished" @click="processImages"
+          >Analyze images</n-button
+        >
         <n-image width="100%" :src="imgRef" />
       </n-flex>
     </n-spin>
