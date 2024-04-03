@@ -4,12 +4,13 @@ import { NH1, NFlex, NButton } from 'naive-ui'
 import UploadComponent from '@/components/UploadComponent.vue'
 import StatsComponent from '@/components/StatsComponent.vue'
 import { useUserStore } from '@/stores/user'
-import router from '@/router'
 import { onMounted } from 'vue'
 import { useUploadStore } from '@/stores/upload'
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 const uploadStore = useUploadStore()
+const router = useRouter()
 
 function logout(e: MouseEvent) {
   e.preventDefault()
@@ -20,11 +21,7 @@ function logout(e: MouseEvent) {
 
 onMounted(async () => {
   uploadStore.$reset()
-
   await userStore.autoLogin()
-  if (!userStore.isLoggedIn) {
-    router.replace({ name: 'login' })
-  }
 })
 </script>
 

@@ -7,17 +7,16 @@ import {
   NModal,
   NButton,
   type UploadFileInfo,
-  type FormInst,
   useMessage,
   type MessageReactive,
   type UploadInst
 } from 'naive-ui'
 
 import { useUploadStore } from '@/stores/upload'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import * as api from '@/api/api'
 import { useUserStore } from '@/stores/user'
-import router from '@/router'
+import axios from 'axios'
 
 const showModalRef = ref(false)
 const previewImageUrlRef = ref('')
@@ -44,9 +43,6 @@ async function handlePreview(file: UploadFileInfo) {
 
 function fileListUpdate(fileList: UploadFileInfo[]) {
   uploadStore.fileList = fileList
-  // uploadStore.updateItemCount(fileList.length)
-  console.log('file list update')
-  console.log(fileList.length)
 
   const allUploaded = fileList.every((file) => file.status == 'finished')
   uploadStore.setUploadFinished(allUploaded)
@@ -60,15 +56,22 @@ function fileListUpdate(fileList: UploadFileInfo[]) {
 }
 
 async function fetchImages() {
-  const res = await api.getAllImages()
-  console.log(res.data)
-  uploadStore.fileList = res.data.map((name: string, idx: number) => {
-    return {
-      id: name,
-      name: name,
-      status: 'finished'
+  try {
+    const res = await api.getAllImages()
+    uploadStore.fileList = res.data.map((name: string) => {
+      return {
+        id: name,
+        name: name,
+        status: 'finished'
+      }
+    })
+  } catch (err) {
+    if (axios.isAxiosError(err) && err.response) {
+      message.error(err.response.data.msg)
+    } else {
+      console.error(err)
     }
-  })
+  }
 }
 
 onMounted(async () => {

@@ -1,4 +1,3 @@
-import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { User, UserJWT } from '@/types/user'
 import * as api from '@/api/api'
@@ -31,20 +30,24 @@ export const useUserStore = defineStore('user', {
         name: user.name,
         token: res.data.token
       })
-
       router.replace({ name: 'home' })
     },
     async autoLogin() {
-      const user = {
-        name: localStorage.getItem('username'),
-        token: localStorage.getItem('token')
-      } as UserJWT
+      try {
+        await api.auth()
+        const user = {
+          name: localStorage.getItem('username'),
+          token: localStorage.getItem('token')
+        } as UserJWT
 
-      if (!user.token || !user.name) {
-        return
+        if (!user.token || !user.name) {
+          throw 'Login unsuccessful'
+        }
+
+        this.setUser(user)
+      } catch (err) {
+        this.logout()
       }
-
-      this.setUser(user)
     },
     setUser(user: UserJWT) {
       this.user = user

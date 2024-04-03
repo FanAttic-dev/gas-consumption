@@ -10,13 +10,13 @@ import {
   type FormInst
 } from 'naive-ui'
 import { onMounted, ref } from 'vue'
-import * as api from '@/api/api'
 import type { User } from '@/types/user'
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
-import router from '@/router'
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
+const router = useRouter()
 const message = useMessage()
 const formRef = ref<FormInst | null>(null)
 const formValue = ref<User>({

@@ -3,11 +3,9 @@ import { NButton, NSpin, NFlex, NCard, NImage, useMessage } from 'naive-ui'
 
 import * as api from '@/api/api'
 import { ref } from 'vue'
-import { useUploadStore } from '@/stores/upload'
 import axios from 'axios'
 
 const message = useMessage()
-const store = useUploadStore()
 const imgRef = ref<string>()
 const showSpin = ref(false)
 
