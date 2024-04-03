@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import {
   NForm,
+  NPageHeader,
+  NH2,
   NFormItem,
   NSpace,
   NCard,
@@ -74,20 +76,25 @@ onMounted(async () => {
 </script>
 
 <template>
-  <n-card title="Login">
-    <n-form ref="formRef" :label-width="80" :model="formValue" :rules="rules">
-      <n-form-item label="Username" path="name">
-        <n-input v-model:value="formValue.name" placeholder="Username" />
-      </n-form-item>
-      <n-form-item label="Password" path="password">
-        <n-input v-model:value="formValue.password" placeholder="Password" />
-      </n-form-item>
-      <n-form-item>
-        <n-space>
-          <n-button type="warning" @click="register"> Register </n-button>
-          <n-button type="primary" @click="login"> Login </n-button>
-        </n-space>
-      </n-form-item>
-    </n-form>
-  </n-card>
+  <n-space vertical>
+    <n-page-header>
+      <template #title> <n-h2 style="margin: 0">Gas Consumption Analyzer </n-h2></template>
+    </n-page-header>
+    <n-card>
+      <n-form ref="formRef" :label-width="80" :model="formValue" :rules="rules">
+        <n-form-item label="Username" path="name">
+          <n-input v-model:value="formValue.name" placeholder="Username" />
+        </n-form-item>
+        <n-form-item label="Password" path="password">
+          <n-input v-model:value="formValue.password" placeholder="Password" />
+        </n-form-item>
+        <n-form-item>
+          <n-space>
+            <n-button type="warning" @click="register"> Register </n-button>
+            <n-button type="primary" @click="login"> Login </n-button>
+          </n-space>
+        </n-form-item>
+      </n-form>
+    </n-card>
+  </n-space>
 </template>

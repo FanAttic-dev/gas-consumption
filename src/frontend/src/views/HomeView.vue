@@ -31,7 +31,7 @@ onMounted(async () => {
       <n-page-header>
         <template #title> <n-h2 style="margin: 0">Gas Consumption Analyzer </n-h2></template>
         <template #extra>
-          <n-flex>
+          <n-flex align="baseline">
             <n-h3>{{ userStore.user?.name }}</n-h3>
             <n-button @click="logout" type="error" ghost>Logout </n-button>
           </n-flex>
