@@ -69,35 +69,35 @@ def validate_file(file) -> bool:
 
 @app.route('/register', methods=["POST"])
 def register():
-    json = request.get_json()
-    name = json["name"]
-    password = json["password"]
-    
-    user = User.query.filter_by(name=name).first()
-    if user is not None:
-        return jsonify({'success': False, 'message': "User already exists. Please, log in."}), 400
+    try:
+        json = request.get_json()
+        user = User.register(json["name"], json["password"])
         
-    user = User(name, password)
-    db.session.add(user)
-    db.session.commit()
+        access_token = create_access_token(identity=user.id)
+        response = jsonify({'success': True, 'token': access_token})    
+        
+        return response, 201
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 400
     
-    access_token = create_access_token(identity=user.id)
-    
-    response = jsonify({'success': True, 'token': access_token})    
-    return response, 201
 
 @app.route('/login', methods=["POST"])
 def login():
-    json = request.get_json()
-    
-    user = User.authenticate(**json)
-    if not user:
-        return jsonify({'success': False, 'message': "User does not exist. Please, register."}), 400
+    try:
+        json = request.get_json()
+        user = User.authenticate(json['name'], json['password'])
         
-    access_token = create_access_token(identity=user.id, expires_delta=timedelta(minutes=TOKEN_EXPIRATION_DELTA_MINS))
-    
-    response = jsonify({'success': True, 'token': access_token})
-    return response, 200
+        access_token = create_access_token(identity=user.id, expires_delta=timedelta(minutes=TOKEN_EXPIRATION_DELTA_MINS))
+        
+        response = jsonify({'success': True, 'token': access_token})
+        return response, 200
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 400
+
+@app.route('/auth', methods=["GET"])
+@jwt_required()
+def auth():
+    return "User authenticated", 200
    
 @app.route('/uploads/<image_name>', methods=["GET"])
 @jwt_required()
@@ -131,7 +131,7 @@ def upload_images():
             if validate_file(file):
                 file.save(str(uploads_folder / file.filename))
             else:
-                raise "File validation failed"
+                raise Exception("File validation failed")
             
         return "Files uploaded successfully", 200
     except Exception as e:

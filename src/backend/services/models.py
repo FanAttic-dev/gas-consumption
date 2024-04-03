@@ -12,18 +12,25 @@ class User(db.Model):
         self.password = generate_password_hash(password)
         
     @classmethod
-    def authenticate(cls, **kwargs):
-        name = kwargs.get('name')
-        password = kwargs.get('password')
-        
-        if not name or not password:
-            return None
-        
+    def authenticate(cls, name: str, password: str):
         user = cls.query.filter_by(name=name).first()
-        if not user or not check_password_hash(user.password, password):
-            return None
+        if not user:
+            raise Exception("User does not exist")
+        if not check_password_hash(user.password, password):
+            raise Exception("Incorrect password")
         
         return user
+    
+    @classmethod
+    def register(cls, name: str, password: str):
+        user = cls.query.filter_by(name=name).first()
+        if user is not None:
+            raise Exception("User already exists. Please, log in.")
+        
+        user = User(name, password)
+        db.session.add(user)
+        db.session.commit()
+        
 
     def to_dict(self):
         return dict(id=self.id, name=self.name)
