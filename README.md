@@ -29,3 +29,4 @@ The application could be published to the internet by hosting it locally and con
 - [ ] ZIP files for better upload
 - [ ] Use authentication when accessing files in the `static` folder.
 - [ ] Use refresh tokens for JWT.
+- [ ] Refactoring (config files, modules, secrets).
