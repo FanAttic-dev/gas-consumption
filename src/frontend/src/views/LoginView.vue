@@ -86,7 +86,7 @@ onMounted(async () => {
           <n-input v-model:value="formValue.name" placeholder="Username" />
         </n-form-item>
         <n-form-item label="Password" path="password">
-          <n-input v-model:value="formValue.password" placeholder="Password" />
+          <n-input v-model:value="formValue.password" type="password" placeholder="Password" />
         </n-form-item>
         <n-form-item>
           <n-space>
