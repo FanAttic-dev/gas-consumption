@@ -6,12 +6,12 @@ from services.digit_extractor_registration import DigitExtractorRegistration
 
 DATASET_PATH = Path("dataset/gasmeter")
 TMP_PATH = Path("tmp")
-SHOW = True
+SHOW = False
 
 
 def extract_digits():
     de = DigitExtractorMorphology(DATASET_PATH, TMP_PATH / CSV_DIRNAME)
-    # de = DigitExtractorRegistration(DATASET_PATH)
+    # de = DigitExtractorRegistration(DATASET_PATH, TMP_PATH / CSV_DIRNAME)
     de.process_dataset(show=SHOW)
 
 

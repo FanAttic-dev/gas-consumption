@@ -42,9 +42,9 @@ class DigitExtractorRegistration(DigitExtractor):
             )
             h, w, _ = matched_vis.shape
             matched_vis = cv2.resize(matched_vis, (1000, int(h * 1000 / w)))
-            cv2.imshow("Matched keypoints", matched_vis)
-            cv2.waitKey(0)
-
+            plt.imshow(matched_vis)
+            plt.show()
+            
         pts_img = np.zeros((len(good), 2), dtype=np.float32)
         pts_template = np.zeros((len(good), 2), dtype=np.float32)
         for (i, m) in enumerate(good):

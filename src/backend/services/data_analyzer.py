@@ -11,7 +11,10 @@ from services.constants import CSV_FILENAME, FIGURE_FILENAME, FIGURES_DIRNAME, C
 
 
 class DataAnalyzer:
-    def __init__(self, csv_folder: Path, figures_folder: Path):
+    LOF_N_NEIGHBORS = 20
+    LOF_CONTAMINATION = 0.3
+    
+    def __init__(self, csv_folder: Path, figures_folder: Path, lof_n_neighbors=LOF_N_NEIGHBORS, lof_contamination=LOF_CONTAMINATION):
         self.figures_folder = figures_folder
         figures_folder.mkdir(exist_ok=True, parents=True)
         csv_path = csv_folder / CSV_FILENAME
@@ -22,6 +25,9 @@ class DataAnalyzer:
         )
         self.df.set_index('date', inplace=True)
         self.df.sort_index(inplace=True)
+        
+        self.lof_n_neighbors = lof_n_neighbors
+        self.lof_contamination = lof_contamination
 
     @staticmethod
     def img_name_to_date(img_name: str) -> str:
@@ -32,7 +38,7 @@ class DataAnalyzer:
         n_na = df["digits"].isna().sum()
 
         df = df.dropna()
-        clf = LocalOutlierFactor(n_neighbors=20, contamination=0.3)
+        clf = LocalOutlierFactor(n_neighbors=self.lof_n_neighbors, contamination=self.lof_contamination)
         X = np.reshape(df["digits"], (-1, 1))
 
         y_pred = clf.fit_predict(X)

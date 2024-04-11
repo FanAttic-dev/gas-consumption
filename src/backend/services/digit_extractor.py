@@ -67,9 +67,12 @@ class DigitExtractor:
     def process_dataset(self, show=False, img_idx=-1):
         if img_idx > -1:
             print(img_idx)
-            img = DigitExtractor.img_read(self.img_paths[img_idx])
-            digits = self.extract_digits(img, show=show)
-            print(digits)
+            try:
+                img = DigitExtractor.img_read(self.img_paths[img_idx])
+                digits = self.extract_digits(img, show=show)
+                print(digits)
+            except Exception as e:
+                print(e)
             return
         
         # if self.csv_path.exists():
@@ -82,17 +85,16 @@ class DigitExtractor:
             "digits": []
         }
         for i, img_path in enumerate(self.img_paths):
+            d["idx"].append(i)
+            d["img_name"].append(img_path.name)
             try:
                 img = DigitExtractor.img_read(img_path)
                 digits = self.extract_digits(img, show=show)
-                
-                print(f"[{i}: {img_path.name}] {digits}")
-                
-                d["idx"].append(i)
-                d["img_name"].append(img_path.name)
-                d["digits"].append(digits)
             except Exception as e:
                 print(e)
+                digits = None
+            print(f"[{i}: {img_path.name}] {digits}")
+            d["digits"].append(digits)
             
         df = pd.DataFrame.from_dict(d)
         df.to_csv(self.csv_path)
